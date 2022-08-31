@@ -1,0 +1,65 @@
+[package]
+name = "pallet-pool"
+version = "0.0.1"
+authors = ["kevin@composable.finance", "Composable Developers"]
+homepage = "https://composable.finance"
+edition = "2021"
+rust-version = "1.56"
+
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]
+
+[dependencies]
+codec = {default-features = false, features = ["derive"], package = "parity-scale-codec", version = "3.0.0"}
+
+#frame-benchmarking = { default-features = false, optional = true, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.24" }
+frame-support = { default-features = false, git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24"  }
+frame-system = { default-features = false, git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24" }
+
+sp-runtime = { default-features = false, git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24" }
+sp-arithmetic = { default-features = false, git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24" }
+sp-io = { default-features = false,  git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24" }
+sp-core = { default-features = false,  git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24" }
+sp-std = { default-features = false,  git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24" }
+
+fixed = "1.9.0"
+hydra-dx-math = { default-features = false, git = "https://github.com/galacticcouncil/HydraDX-math" }
+
+composable-traits = { git = "https://github.com/ComposableFi/composable", default-features = false, branch = "main" }
+pool-trait = { path = "../traits", default-features = false }
+
+num-traits = { version = "0.2.14", default-features = false }
+num-integer = { version = "0.1", default-features = false }
+scale-info = { version = "2.1.1", default-features = false, features = [
+  "derive",
+] }
+
+# dependendices only for tests
+[dev-dependencies]
+#proptest = "1.0.0"
+#serde = "1.0.119"
+#orml-tokens = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "17a791edf431d7d7aee1ea3dfaeeb7bc21944301" }
+#orml-traits = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "17a791edf431d7d7aee1ea3dfaeeb7bc21944301", default-features = false }
+#pallet-balances = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24" }
+#composable-tests-helpers = { git = "https://github.com/ComposableFi/composable", default-features = false, branch = "main" }
+
+[features]
+default = ["std"]
+std = [
+    "codec/std",
+    "frame-support/std",
+    "frame-system/std",
+    "sp-runtime/std",
+    "sp-io/std",
+    "sp-core/std",
+    "sp-std/std",
+    "sp-arithmetic/std",
+    "composable-traits/std",
+    "scale-info/std",
+]
+
+#runtime-benchmarks = [
+#    "frame-benchmarking",
+#    "frame-support/runtime-benchmarks",
+#    "frame-system/runtime-benchmarks",
+#]
