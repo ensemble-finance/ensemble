@@ -160,7 +160,7 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
-pub use pallet::*;
+pub use frame_system::pallet::*;
 
 mod traits;
 
@@ -206,17 +206,18 @@ pub mod pallet {
     use num_traits::SaturatingSub;
     use scale_info::TypeInfo;
 
-    use sp_arithmetic::helpers_128bit::multiply_by_rational;
+    use sp_arithmetic::{helpers_128bit::multiply_by_rational_with_rounding, Rounding};
     use sp_runtime::{
         traits::{
             AccountIdConversion, AtLeast32BitUnsigned, CheckedAdd, CheckedMul, CheckedSub, Convert,
-            One, Zero
+            One, Zero,
         },
         ArithmeticError, FixedPointOperand, PerThing, Perquintill,
     };
 
     use sp_std::fmt::Debug;
     use std::collections::BTreeSet;
+    use codec::MaxEncodedLen;
 
     // ----------------------------------------------------------------------------------------------------
     //                                    Declaration Of The Pallet Type
@@ -684,7 +685,10 @@ pub mod pallet {
             origin: OriginFor<T>,
             config: PoolConfig<AccountIdOf<T>, AssetIdOf<T>, WeightOf<T>, PoolSizeOf<T>>,
             creation_fee: Deposit<T>,
-        ) -> DispatchResultWithPostInfo {
+        ) -> DispatchResultWithPostInfo
+        where
+            <T as Config>::PoolSize: frame_support::pallet_prelude::Get<u32>,
+        {
             // Requirement 0) This extrinsic must be signed
             let from = ensure_signed(origin)?;
 
@@ -1867,21 +1871,35 @@ pub mod pallet {
 
             let deposit = <T::Convert as Convert<BalanceOf<T>, u128>>::convert(deposit.amount);
             let deposit_total = <T::Convert as Convert<BalanceOf<T>, u128>>::convert(deposit_total);
-            let deposit_value_distribution =
-                multiply_by_rational(1, deposit, deposit_total).ok_or(ArithmeticError::Overflow)?;
+            let deposit_value_distribution = multiply_by_rational_with_rounding(
+                1,
+                deposit,
+                deposit_total,
+                Rounding::NearestPrefDown,
+            )
+            .ok_or(ArithmeticError::Overflow)?;
 
             let reserve: BalanceOf<T> = Self::balance_of(pool_id, &asset)?;
             let reserve: u128 = <T::Convert as Convert<BalanceOf<T>, u128>>::convert(reserve);
             let reserve_total = <T::Convert as Convert<BalanceOf<T>, u128>>::convert(reserve_total);
-            let reserve_value_distribution =
-                multiply_by_rational(1, reserve, reserve_total).ok_or(ArithmeticError::Overflow)?;
+            let reserve_value_distribution = multiply_by_rational_with_rounding(
+                1,
+                reserve,
+                reserve_total,
+                Rounding::NearestPrefDown,
+            )
+            .ok_or(ArithmeticError::Overflow)?;
 
             let epsilon: u128 = T::Epsilon::get().deconstruct().into();
             let one: u128 = WeightOf::<T>::one().deconstruct().into();
 
-            let margin_of_error: u128 =
-                multiply_by_rational(reserve_value_distribution, epsilon, one)
-                    .ok_or(ArithmeticError::Overflow)?;
+            let margin_of_error: u128 = multiply_by_rational_with_rounding(
+                reserve_value_distribution,
+                epsilon,
+                one,
+                Rounding::NearestPrefDown,
+            )
+            .ok_or(ArithmeticError::Overflow)?;
 
             let lower_bound = reserve_value_distribution - margin_of_error;
             let upper_bound = reserve_value_distribution + margin_of_error;
@@ -2202,9 +2220,13 @@ pub mod pallet {
                 <T::Convert as Convert<T::Balance, u128>>::convert(lp_circulating_supply);
 
             // Calculate the LP Share amount
-            let lp_share_of_asset =
-                multiply_by_rational(pool_balance_of_token, lp_amount, lp_circulating_supply)
-                    .ok_or(ArithmeticError::Overflow)?;
+            let lp_share_of_asset = multiply_by_rational_with_rounding(
+                pool_balance_of_token,
+                lp_amount,
+                lp_circulating_supply,
+                Rounding::NearestPrefDown,
+            )
+            .ok_or(ArithmeticError::Overflow)?;
 
             // Convert back to Balance type
             Ok(<T::Convert as Convert<u128, T::Balance>>::convert(
