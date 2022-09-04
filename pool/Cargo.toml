@@ -25,7 +25,7 @@ sp-std = { default-features = false,  git = "https://github.com/paritytech/subst
 fixed = "1.9.0"
 hydra-dx-math = { default-features = false, git = "https://github.com/galacticcouncil/HydraDX-math" }
 
-composable-traits = { git = "https://github.com/ComposableFi/composable", default-features = false, rev = "bfce651ee111a56f1c80cf7f9877e24e61a55c53" }
+composable-traits = { git = "https://github.com/ComposableFi/composable", default-features = false, branch = "ensemble" }
 pool-trait = { path = "../traits", default-features = false }
 
 num-traits = { version = "0.2.14", default-features = false }
@@ -41,7 +41,7 @@ scale-info = { version = "2.1.1", default-features = false, features = [
 #orml-tokens = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "17a791edf431d7d7aee1ea3dfaeeb7bc21944301" }
 #orml-traits = { git = "https://github.com/open-web3-stack/open-runtime-module-library", rev = "17a791edf431d7d7aee1ea3dfaeeb7bc21944301", default-features = false }
 #pallet-balances = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24" }
-#composable-tests-helpers = { git = "https://github.com/ComposableFi/composable", default-features = false, branch = "main" }
+#composable-tests-helpers = { git = "https://github.com/ComposableFi/composable", default-features = false, branch = "ensemble" }
 
 [features]
 default = ["std"]
