@@ -17,3 +17,4 @@ Roadmap:
     3. Move tests helper functionality into a helpers.rs file
     4. Move propcompose functionality into a prop_compose.rs file
 6. ~~Move code to new repo~~
+7. Remove composable vault dependency.
