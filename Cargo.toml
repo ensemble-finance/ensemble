@@ -1,6 +1,0 @@
-[workspace]
-members = [
-    "traits",
-    "pool",
-]
-resolver = "2"
